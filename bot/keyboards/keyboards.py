@@ -28,8 +28,7 @@ class KeyboardManager:
     @staticmethod
     def addvocabulary_btns():
         keyboard = [
-            [KeyboardButton("🏘 Go to main menu")],
-            [KeyboardButton("Skip ⏩")]
+            [KeyboardButton("🏘 Go to main menu")]
         ]
         return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 

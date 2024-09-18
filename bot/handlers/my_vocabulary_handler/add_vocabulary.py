@@ -9,26 +9,43 @@ from telegram.ext import (
 from bot.keyboards.keyboards import KeyboardManager
 from bot.handlers.my_vocabulary import my_vocabulary
 
-WORD, DEFINITION, EXAMPLE, CONFIRM = range(4)
+WORD, DEFINITION, PART_OF_SPEECH, EXAMPLE, CONFIRM = range(5)
 
+
+async def go_old_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await my_vocabulary(update, context)
+    return ConversationHandler.END
 
 # Start the add word conversation
 async def start_add_word(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    await update.message.reply_text("Let's add a new word to your vocabulary list! What's the word?", reply_markup=KeyboardManager.addvocabulary_btns())
+    keyboard = [['🔙 Go to menu']]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+    await update.message.reply_text("Let's add a new word to your vocabulary list! \nWhat's the word?", reply_markup=reply_markup)
     return WORD
 
 # Get the word
 async def get_word(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    if update.message.text == '🔙 Go to menu':
+        return go_old_menu()
+    
+    keyboard = [['Skip ⏩'], ['🔙 Go to menu']]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     context.user_data['new_word'] = update.message.text
-    await update.message.reply_text(f"Great! Now, what's the definition of '{context.user_data['new_word']}'?")
+    await update.message.reply_text(f"Great! Now, what's the definition of '{context.user_data['new_word']}'?", reply_markup=reply_markup)
     return DEFINITION
 
 # Get the definition
 async def get_definition(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    context.user_data['definition'] = update.message.text
+    if update.message.text == '🔙 Go to menu':
+        return go_old_menu()
     
-    keyboard = [['Noun', 'Verb'], ['Adjective', 'Adverb'], ['Other'], 'Skip ⏩']
-    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
+    if update.message.text == 'Skip ⏩':
+        context.user_data['definition'] = "Definition not provided"
+    else:
+        context.user_data['definition'] = update.message.text
+    
+    keyboard = [['Noun', 'Verb'], ['Adjective', 'Adverb'], ['Other'], ['Skip ⏩']]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
     
     await update.message.reply_text(
         "Can you provide an example sentence using this word? Or press 'Skip ⏩' to skip this step.?",
@@ -36,14 +53,40 @@ async def get_definition(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     )
     return EXAMPLE
 
+# Get the definition
+async def get_definition(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    context.user_data['definition'] = update.message.text
+    
+    keyboard = [['Noun', 'Verb'], ['Adjective', 'Adverb'], ['Other']]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
+    
+    await update.message.reply_text(
+        "What part of speech is this word?",
+        reply_markup=reply_markup
+    )
+    return PART_OF_SPEECH
+
+# Get the part of speech
+async def get_part_of_speech(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    context.user_data['part_of_speech'] = update.message.text
+    await update.message.reply_text(
+        "Can you provide an example sentence using this word?",
+        reply_markup=ReplyKeyboardRemove()
+    )
+    return EXAMPLE
+
 # Get the example sentence
 async def get_example(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    context.user_data['example'] = update.message.text
+    if update.message.text == 'Skip ⏩':
+        context.user_data['example'] = "no example"
+    else:
+        context.user_data['example'] = update.message.text
     
     # Prepare confirmation message
     confirmation = f"Here's the word you want to add:\n\n" \
                    f"Word: {context.user_data['new_word']}\n" \
                    f"Definition: {context.user_data['definition']}\n" \
+                   f"Part of Speech: {context.user_data['part_of_speech']}\n" \
                    f"Example: {context.user_data['example']}\n\n" \
                    f"Do you want to save this word? (Yes/No)"
     
@@ -90,9 +133,10 @@ add_word_handler = ConversationHandler(
     states={
         WORD: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_word)],
         DEFINITION: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_definition)],
+        PART_OF_SPEECH: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_part_of_speech)],
         EXAMPLE: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_example)],
         CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, confirm_word)],
     },
-    fallbacks=[MessageHandler(filters.Regex("^🏘 Go to main menu$"), cancel)],
+    fallbacks=[MessageHandler(filters.Regex("^🔙 Go to menu$"), cancel)],
     
 )
