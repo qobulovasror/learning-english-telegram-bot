@@ -16,22 +16,6 @@ class KeyboardManager:
             [KeyboardButton("🏘 Go to main menu")]
         ]
         return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    
-    @staticmethod
-    def get_add_word_keyboard():
-        keyboard = [
-            [KeyboardButton("Add Noun"), KeyboardButton("Add Verb")],
-            [KeyboardButton("Add Adjective"), KeyboardButton("Back to Main")]
-        ]
-        return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    
-    @staticmethod
-    def addvocabulary_btns():
-        keyboard = [
-            [KeyboardButton("🏘 Go to main menu")]
-        ]
-        return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
 
 
     @staticmethod
