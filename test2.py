@@ -83,3 +83,22 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+from telegram import Update
+from telegram.ext import ContextTypes
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Welcome! I'm your friendly bot. What would you like to do?",
+    )

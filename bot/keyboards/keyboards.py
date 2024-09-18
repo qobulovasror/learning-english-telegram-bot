@@ -4,11 +4,18 @@ class KeyboardManager:
     @staticmethod
     def get_main_keyboard():
         keyboard = [
-            [KeyboardButton("Add Word"), KeyboardButton("Quiz")],
-            [KeyboardButton("Statistics"), KeyboardButton("Settings")]
+            [KeyboardButton("Quiz"), KeyboardButton("My vocabulary")],
+            [KeyboardButton("Train"), KeyboardButton("Feedback")]
         ]
         return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+    @staticmethod
+    def get_my_vocabulary_keyboard():
+        keyboard = [
+            [KeyboardButton("List of available\n vocabulary"), KeyboardButton("Add vocabulary")]
+        ]
+        return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    
     @staticmethod
     def get_add_word_keyboard():
         keyboard = [
