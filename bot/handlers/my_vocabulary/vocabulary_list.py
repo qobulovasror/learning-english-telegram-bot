@@ -1,7 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler, CommandHandler
 from bot.keyboards.keyboards import KeyboardManager 
-from bot.db.my_vocabulary import MyVocabulary
+from database.my_vocabulary import MyVocabulary
 
 
 # async def addvocabulary(update: Update, context: ContextTypes.DEFAULT_TYPE):

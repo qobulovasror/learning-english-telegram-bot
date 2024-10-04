@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('db/myvocabulary.db')
+conn = sqlite3.connect('database/db/myvocabulary.db')
 cursor = conn.cursor()
 
 

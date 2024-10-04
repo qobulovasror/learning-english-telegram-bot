@@ -8,7 +8,7 @@ from telegram.ext import (
 )
 from bot.keyboards.keyboards import KeyboardManager
 from bot.handlers.my_vocabulary.menu import my_vocabulary_menu
-from bot.db.my_vocabulary import MyVocabulary
+from database.my_vocabulary import MyVocabulary
 
 WORD, TRANSLATION, PART_OF_SPEECH, EXAMPLE, CONFIRM = range(5)
 
